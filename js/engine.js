@@ -25,7 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-        var imageUrl = null;
+    var imageUrl = null;
+    var playerText, playerImageArr, lifeCountArr;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -162,7 +163,6 @@ var Engine = (function(global) {
         //add an event listener to the canvas element to listen for click events.
         canvas.addEventListener("click", getCursorPosition, false);
 
-
         if(imageUrl !== null) {
             player.render(imageUrl);
         }
@@ -195,8 +195,46 @@ var Engine = (function(global) {
             } else if(iconX >= 54 && iconX <= 87 && iconY >= 80 && iconY <= 118) {
                 imageUrl = 'images/char-cat-girl.png';
             }
-        } else {
 
+            player.render(imageUrl);
+
+            //remove player images from menu and update life left icon
+            playerText = null;
+            playerImageArr = {
+                "imageDetails" : []
+            };
+
+            lifeCountArr = {
+                "counts" : [
+                {
+                    "xCordinate" : "440",
+                    "yCordinate" : "70"
+                },
+                {
+                    "xCordinate" : "470",
+                    "yCordinate" : "70"
+                }
+            ]};
+            drawMenu(playerText, playerImageArr,lifeCountArr);
+
+        } else {
+            playerText = null;
+            playerImageArr = {
+                "imageDetails" : []
+            };
+
+            lifeCountArr = {
+                "counts" : [
+                {
+                    "xCordinate" : "440",
+                    "yCordinate" : "70"
+                },
+                {
+                    "xCordinate" : "470",
+                    "yCordinate" : "70"
+                }
+            ]};
+            drawMenu(playerText, playerImageArr,lifeCountArr);
         }
     };
 
@@ -206,11 +244,42 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
-        initiate();
+        playerText = 'SELECT PLAYER';
+        playerImageArr = {
+            "imageDetails" : [
+                {
+                    "image" : "images/char-boy-icon.png",
+                    "xCordinate" : "5",
+                    "yCordinate" : "50"
+                },
+                {
+                    "image" : "images/char-cat-girl-icon.png",
+                    "xCordinate" : "45",
+                    "yCordinate" : "50"
+                }
+        ]};
+
+        lifeCountArr = {
+            "counts" : [
+                {
+                    "xCordinate" : "410",
+                    "yCordinate" : "70"
+                },
+                {
+                    "xCordinate" : "440",
+                    "yCordinate" : "70"
+                },
+                {
+                    "xCordinate" : "470",
+                    "yCordinate" : "70"
+                }
+        ]};
+
+        drawMenu(playerText, playerImageArr,lifeCountArr);
     }
 
     //Display menu with player images and life on the screen
-    function initiate() {
+    function drawMenu(playerText, playerImageArr,lifeCountArr) {
         //draw menu background
         for (col = 0; col <= 4; col++) {
             ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
@@ -219,16 +288,27 @@ var Engine = (function(global) {
         //place menu text and images on the menu
         ctx.font = "12pt Impact";
         ctx.textAlign = "center";
-        ctx.strokeStyle = "black";
-        ctx.linewidth= 3;
         ctx.fillStyle = "black";
-        ctx.fillText("SELECT PLAYER",50,70);
-        ctx.fillText("REST",450,70);
-        ctx.drawImage(Resources.get('images/life-icon.png'), 470, 70);
-        ctx.drawImage(Resources.get('images/life-icon.png'), 440, 70);
-        ctx.drawImage(Resources.get('images/life-icon.png'), 410, 70);
-        ctx.drawImage(Resources.get('images/char-boy-icon.png'), 5, 50);
-        ctx.drawImage(Resources.get('images/char-cat-girl-icon.png'), 45, 50);
+
+        if(playerText !== null) {
+            ctx.fillText('SELECT PLAYER',50,70);
+        }
+
+        ctx.fillText('LIFE LEFT',453,70);
+
+        if(playerImageArr.imageDetails.length > 0)
+        {
+            for(var icon in playerImageArr.imageDetails) {
+                ctx.drawImage(Resources.get(playerImageArr.imageDetails[icon].image), playerImageArr.imageDetails[icon].xCordinate , playerImageArr.imageDetails[icon].yCordinate);
+            }
+        }
+
+        if(lifeCountArr.counts.length > 0)
+        {
+            for(var count in lifeCountArr.counts) {
+                ctx.drawImage(Resources.get('images/life-icon.png'), lifeCountArr.counts[count].xCordinate , lifeCountArr.counts[count].yCordinate);
+            }
+        }
     };
 
     /* Go ahead and load all of the images we know we're going to need to
