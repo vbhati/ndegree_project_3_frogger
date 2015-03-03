@@ -25,6 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+        var imageUrl = null;
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -113,12 +115,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
+                'images/score-board.png',
                 'images/water-block.png',   // Top row is water
                 'images/stone-block.png',   // Row 1 of 3 of stone
                 'images/stone-block.png',   // Row 2 of 3 of stone
                 'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/grass-block.png'   // Row 1 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -128,7 +130,7 @@ var Engine = (function(global) {
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
-        for (row = 0; row < numRows; row++) {
+        for (row = 1; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
                  * requires 3 parameters: the image to draw, the x coordinate
@@ -137,7 +139,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 85);
             }
         }
 
@@ -157,8 +159,46 @@ var Engine = (function(global) {
             enemy.render();
         });
 
-        player.render();
+        //add an event listener to the canvas element to listen for click events.
+        canvas.addEventListener("click", getCursorPosition, false);
+
+
+        if(imageUrl !== null) {
+            player.render(imageUrl);
+        }
     }
+
+    //The getCursorPosition(e) function gets called when the user clicks anywhere within the canvas.
+    //Its argument is a MouseEvent object that contains information about where the user clicked.
+    function getCursorPosition(e) {
+        //if game has not started put player in start position
+        if(!gameInProgress) {
+            var iconX,iconY;
+            if (e.pageX != undefined && e.pageY != undefined) {
+                iconX = e.pageX;
+                iconY = e.pageY;
+            } else {
+                iconX = e.clientX + document.body.scrollLeft +
+                    document.documentElement.scrollLeft;
+                iconY = e.clientY + document.body.scrollTop +
+                    document.documentElement.scrollTop;
+            }
+
+            //At this point, we have x and y coordinates that are
+            //relative to the document (that is, the entire HTML page).
+            //Code below calculates coordinates relative to the canvas.
+            iconX -= canvas.offsetLeft;
+            iconY -= canvas.offsetTop;
+
+            if(iconX >= 14 && iconX <= 48 && iconY >= 80 && iconY <= 118) {
+                imageUrl = 'images/char-boy.png';
+            } else if(iconX >= 54 && iconX <= 87 && iconY >= 80 && iconY <= 118) {
+                imageUrl = 'images/char-cat-girl.png';
+            }
+        } else {
+
+        }
+    };
 
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
@@ -166,7 +206,30 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        initiate();
     }
+
+    //Display menu with player images and life on the screen
+    function initiate() {
+        //draw menu background
+        for (col = 0; col <= 4; col++) {
+            ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
+        }
+
+        //place menu text and images on the menu
+        ctx.font = "12pt Impact";
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "black";
+        ctx.linewidth= 3;
+        ctx.fillStyle = "black";
+        ctx.fillText("SELECT PLAYER",50,70);
+        ctx.fillText("REST",450,70);
+        ctx.drawImage(Resources.get('images/life-icon.png'), 470, 70);
+        ctx.drawImage(Resources.get('images/life-icon.png'), 440, 70);
+        ctx.drawImage(Resources.get('images/life-icon.png'), 410, 70);
+        ctx.drawImage(Resources.get('images/char-boy-icon.png'), 5, 50);
+        ctx.drawImage(Resources.get('images/char-cat-girl-icon.png'), 45, 50);
+    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -177,7 +240,12 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/score-board.png',
+        'images/char-cat-girl-icon.png',
+        'images/char-boy-icon.png',
+        'images/life-icon.png'
     ]);
     Resources.onReady(init);
 
