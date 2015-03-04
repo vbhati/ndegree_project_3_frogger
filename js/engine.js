@@ -1,10 +1,10 @@
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
- * render methods on your player and enemy objects (defined in your app.js).
+ * render methods on player and enemy objects (defined in app.js).
  *
  * A game engine works by drawing the entire game screen over and over, kind of
- * like a flipbook you may have created as a kid. When your player moves across
+ * like a flipbook you may have created as a kid. When player moves across
  * the screen, it may look like just that image/character is moving or being
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
@@ -36,7 +36,7 @@ var Engine = (function(global) {
      * and handles properly calling the update and render methods.
      */
     function main() {
-        /* Get our time delta information which is required if your game
+        /* Get our time delta information which is required if game
          * requires smooth animation. Because everyone's computer processes
          * instructions at different speeds we need a constant value that
          * would be the same for everyone (regardless of how fast their
@@ -45,13 +45,35 @@ var Engine = (function(global) {
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
-        /* Call our update/render functions, pass along the time delta to
-         * our update function since it may be used for smooth animation.
+
+        /* Check if game is over.
+         * If yes : update menu, display message "GAME OVER"
+         * and restart game.
+         */
+        if(lifeCount === 0) {
+            score = 0;
+            //draw menu background to display message
+            for (col = 0 ; col <= 4 ; col++) {
+                ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
+            }
+            ctx.font = "20pt Impact";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "black";
+            ctx.fillText('GAME OVER',70,50);
+            setTimeout(function() {
+                //reload window to restart game.
+                location.reload();
+            }, 2000);
+
+        }
+
+        /* Call update/render functions, pass along the time delta to
+         * update function since it may be used for smooth animation.
          */
         update(dt);
         render();
 
-        /* Set our lastTime variable which is used to determine the time delta
+        /* Set lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
         lastTime = now;
@@ -60,7 +82,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -72,26 +94,18 @@ var Engine = (function(global) {
         main();
     }
 
-    /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
+    /* This function is called by main (game loop) and itself calls all
+     * of the functions which may need to update entity's data.
      */
     function update(dt) {
         updateEntities(dt);
         checkCollisions();
     }
 
-    /* This is called by the update function  and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to  the object. Do your drawing in your
-     * render methods.
+    /* This is called by the update function and loops through all of the
+     * objects within allEnemies array as defined in app.js and calls
+     * their update() methods. It will then call the update function for
+     * player object.
      */
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
@@ -100,13 +114,26 @@ var Engine = (function(global) {
         player.update();
     }
 
+    /* This is called by the update function. It checks for any collinsions
+     * between player and enemy. It also updates the menu based on player's remaining
+     * life left.
+     */
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
             enemy.checkCollisions();
         });
+        // Update life counts on menu bar
+        if(lifeCount == 2) {
+            ctx.drawImage(Resources.get('images/score-board.png'), 404, 0);
+            ctx.fillText('LIFE LEFT',453,45);
+            ctx.drawImage(Resources.get('images/life-icon.png'), 470, 53);
+        } else if(lifeCount == 1) {
+            ctx.drawImage(Resources.get('images/score-board.png'), 404, 0);
+            ctx.fillText('0 LIFE LEFT',453,45);
+        }
     }
-    /* This function initially draws the "game level", it will then call
-     * the renderEntities function. Remember, this function is called every
+    /* This function initially draws the "game level", it then calls
+     * the renderEntities function. This function is called every
      * game tick (or loop of the game engine) because that's how games work -
      * they are flipbooks creating the illusion of animation but in reality
      * they are just drawing the entire screen over and over.
@@ -127,7 +154,7 @@ var Engine = (function(global) {
             numCols = 5,
             row, col;
 
-        /* Loop through the number of rows and columns we've defined above
+        /* Loop through the number of rows and columns defined above
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
@@ -136,111 +163,103 @@ var Engine = (function(global) {
                 /* The drawImage function of the canvas' context element
                  * requires 3 parameters: the image to draw, the x coordinate
                  * to start drawing and the y coordinate to start drawing.
-                 * We're using our Resources helpers to refer to our images
-                 * so that we get the benefits of caching these images, since
+                 * We're using Resources helpers to refer to images to
+                 * get the benefits of caching these images, since
                  * we're using them over and over.
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 85);
             }
         }
 
-
         renderEntities();
     }
 
     /* This function is called by the render function and is called on each game
-     * tick. It's purpose is to then call the render functions you have defined
-     * on your enemy and player entities within app.js
+     * tick. It's purpose is to then call the render functions defined
+     * on enemy and player entities within app.js
      */
     function renderEntities() {
         /* Loop through all of the objects within the allEnemies array and call
-         * the render function you have defined.
+         * the render function.
          */
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
-        //add an event listener to the canvas element to listen for click events.
-        canvas.addEventListener("click", getCursorPosition, false);
+        /* Add an event listener to the canvas element to listen for click events.
+         * On start of game, user can select player displayed on canvas. Selection
+         * is handled using canvas click event.
+         */
+        canvas.addEventListener("click", checkCanvasClickPosition, false);
 
+        // Render player only if user has selected player in this case if imageUrl has value.
         if(imageUrl !== null) {
             player.render(imageUrl);
         }
+
+        /* To update score on each tick and display on canvas menu.
+         */
+        ctx.drawImage(Resources.get('images/score-board.png'), 202, 0);
+        ctx.font = "14pt Impact";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+        ctx.fillText('SCORE',245,45);
+        ctx.fillText(score,240,80);
     }
 
-    //The getCursorPosition(e) function gets called when the user clicks anywhere within the canvas.
-    //Its argument is a MouseEvent object that contains information about where the user clicked.
-    function getCursorPosition(e) {
-        //if game has not started put player in start position
+    /* checkCanvasClickPosition(e) function gets called when user clicks anywhere within the canvas.
+     * It's argument is a MouseEvent object that contains information about where user clicked.
+     */
+    function checkCanvasClickPosition(e) {
+
+        //Initialize values of player images and life count.
+        playerText = null;
+        playerImageArr = {
+            "imageDetails" : []
+        };
+
+        lifeCountArr = {
+            "counts" : [
+            {
+                "xCordinate" : "440",
+                "yCordinate" : "53"
+            },
+            {
+                "xCordinate" : "470",
+                "yCordinate" : "53"
+            }
+        ]};
+
+        /* Check which player user has selected and store the value in
+         * imageUrl variable to be used to display player on screen.
+         */
         if(!gameInProgress) {
             var iconX,iconY;
             if (e.pageX != undefined && e.pageY != undefined) {
                 iconX = e.pageX;
                 iconY = e.pageY;
-            } else {
-                iconX = e.clientX + document.body.scrollLeft +
-                    document.documentElement.scrollLeft;
-                iconY = e.clientY + document.body.scrollTop +
-                    document.documentElement.scrollTop;
             }
-
             //At this point, we have x and y coordinates that are
             //relative to the document (that is, the entire HTML page).
             //Code below calculates coordinates relative to the canvas.
             iconX -= canvas.offsetLeft;
             iconY -= canvas.offsetTop;
 
-            if(iconX >= 14 && iconX <= 48 && iconY >= 80 && iconY <= 118) {
+            if(iconX >= 24 && iconX <= 56 && iconY >= 54 && iconY <= 88) {
                 imageUrl = 'images/char-boy.png';
-            } else if(iconX >= 54 && iconX <= 87 && iconY >= 80 && iconY <= 118) {
+            } else if(iconX >= 70 && iconX <= 100 && iconY >= 54 && iconY <= 88) {
                 imageUrl = 'images/char-cat-girl.png';
             }
 
+            // Render player
             player.render(imageUrl);
-
-            //remove player images from menu and update life left icon
-            playerText = null;
-            playerImageArr = {
-                "imageDetails" : []
-            };
-
-            lifeCountArr = {
-                "counts" : [
-                {
-                    "xCordinate" : "440",
-                    "yCordinate" : "70"
-                },
-                {
-                    "xCordinate" : "470",
-                    "yCordinate" : "70"
-                }
-            ]};
-            drawMenu(playerText, playerImageArr,lifeCountArr);
-
-        } else {
-            playerText = null;
-            playerImageArr = {
-                "imageDetails" : []
-            };
-
-            lifeCountArr = {
-                "counts" : [
-                {
-                    "xCordinate" : "440",
-                    "yCordinate" : "70"
-                },
-                {
-                    "xCordinate" : "470",
-                    "yCordinate" : "70"
-                }
-            ]};
+            // draw the menu by removing player icons and updating remaining life icons.
             drawMenu(playerText, playerImageArr,lifeCountArr);
         }
-    };
+    }
 
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
+    /* This function is used to set initial values of game elements.
+     * It's only called once by the init() method.
      */
     function reset() {
         // noop
@@ -249,13 +268,13 @@ var Engine = (function(global) {
             "imageDetails" : [
                 {
                     "image" : "images/char-boy-icon.png",
-                    "xCordinate" : "5",
-                    "yCordinate" : "50"
+                    "xCordinate" : "15",
+                    "yCordinate" : "23"
                 },
                 {
                     "image" : "images/char-cat-girl-icon.png",
-                    "xCordinate" : "45",
-                    "yCordinate" : "50"
+                    "xCordinate" : "60",
+                    "yCordinate" : "23"
                 }
         ]};
 
@@ -263,53 +282,59 @@ var Engine = (function(global) {
             "counts" : [
                 {
                     "xCordinate" : "410",
-                    "yCordinate" : "70"
+                    "yCordinate" : "50"
                 },
                 {
                     "xCordinate" : "440",
-                    "yCordinate" : "70"
+                    "yCordinate" : "50"
                 },
                 {
                     "xCordinate" : "470",
-                    "yCordinate" : "70"
+                    "yCordinate" : "50"
                 }
         ]};
 
+        // Draw the menu by removing player icons and updating remaining life icons.
         drawMenu(playerText, playerImageArr,lifeCountArr);
     }
 
-    //Display menu with player images and life on the screen
+    /* This function is called from reset function when the game starts and by checkCanvasClickPosition
+     * function to draw menu once user has selected player
+     */
     function drawMenu(playerText, playerImageArr,lifeCountArr) {
-        //draw menu background
+        //Draw menu background i.e. first row on canvas
         for (col = 0; col <= 4; col++) {
             ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
         }
 
-        //place menu text and images on the menu
-        ctx.font = "12pt Impact";
+        ctx.font = "14pt Impact";
         ctx.textAlign = "center";
         ctx.fillStyle = "black";
 
+        //Put "Select Player" text on menu if playerText variable is not null
         if(playerText !== null) {
-            ctx.fillText('SELECT PLAYER',50,70);
+            ctx.fillText('SELECT PLAYER',70,45);
         }
 
-        ctx.fillText('LIFE LEFT',453,70);
+        //Put "Life Left" text on menu
+        ctx.fillText('LIFE LEFT',453,45);
 
-        if(playerImageArr.imageDetails.length > 0)
-        {
+        /* Put player icons on menu bar, in future more players can be added since
+         * we are using JSON object to hold image url and coordinates
+         */
+        if(playerImageArr.imageDetails.length > 0) {
             for(var icon in playerImageArr.imageDetails) {
                 ctx.drawImage(Resources.get(playerImageArr.imageDetails[icon].image), playerImageArr.imageDetails[icon].xCordinate , playerImageArr.imageDetails[icon].yCordinate);
             }
         }
 
-        if(lifeCountArr.counts.length > 0)
-        {
+        // Put life icons on menu, more life icons can be added if require through JSON
+        if(lifeCountArr.counts.length > 0) {
             for(var count in lifeCountArr.counts) {
                 ctx.drawImage(Resources.get('images/life-icon.png'), lifeCountArr.counts[count].xCordinate , lifeCountArr.counts[count].yCordinate);
             }
         }
-    };
+    }
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when

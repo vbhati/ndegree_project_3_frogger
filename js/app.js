@@ -1,18 +1,18 @@
-// Enemies our player must avoid
+// Enemies player must avoid
+// Parameter : x cordinate, y cordinate and enemy's speed
 var Enemy = function(x,y,z) {
-    // Variables applied to each of our instances go here,
     this.x = x;
     this.y = y;
     this.speed = z;
     this.sprite = 'images/enemy-bug.png';
-}
+};
 
-// Update the enemy's position, required method for game
+// Update the enemy's position
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // Multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+    /* Multiply any movement by the dt parameter which will
+     * ensure the game runs at the same speed for all computers.
+     */
     if(this.x > 510) {
         this.x = start;
     } else {
@@ -20,39 +20,45 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw enemy on the screen
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 // Check if there is any collision between enemy and player
-// If yes reset player to start.
+// If yes reset player to start and update life count and score.
 Enemy.prototype.checkCollisions = function() {
     var xStart = player.x - 60;
     if(this.y == player.y && (this.x > xStart && this.x < player.x)) {
         player.x = 200;
-        player.y = 400
+        player.y = 400;
+        if(lifeCount > 0) {
+            lifeCount--;
+            if(score !== 0 ) {
+                score = score - 100;
+            }
+        }
     }
 };
 
 // Player that will fight enemies
+// Parameters: x and y coordinates
 var Player = function(x,y) {
     this.x = x;
     this.y = y;
-}
+};
 
 // Update the player's position
 Player.prototype.update = function() {
     this.x = this.x;
     this.y = this.y;
-}
+};
 
-
-// Draw the player on the screen, required method for game
+// Draw the player on screen
+// Parameters : player's image which user has chosen
 Player.prototype.render = function(imageUrl) {
     ctx.drawImage(Resources.get(imageUrl), this.x, this.y);
-}
-
+};
 
 // It receives user input "keypress" value and moves the player
 // according to that input.
@@ -74,42 +80,46 @@ Player.prototype.handleInput = function(code) {
         this.y = this.y;
     }
     player.checkWinner();
-}
+};
 
-//Check if the player has reached water and won
+// Check if the player has made it to water
 Player.prototype.checkWinner = function() {
     if(player.y == 72) {
+        // Setting time delay before moving player
+        // back to start position
         setTimeout(function() {
-            //Display message
-            ctx.font = "20pt Impact";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "black";
-            ctx.fillText('KEEP PLAYING',250,100);
-            //Update player coordinates.
-            setTimeout(function() {
-                player.x = 200;
-                player.y = 400;
-            }, 500);
+            player.x = 200;
+            player.y = 400;
+            score = score + 100;
         }, 1000);
     }
-}
+};
 
-// Now instantiate your objects.
+// Instantiate enemy objects.
 var start = -80;
 var enemy1 = new Enemy(-25,154,170);
 var enemy2 = new Enemy(-50,236,190);
 var enemy3 = new Enemy(0,318,130);
 var enemy4 = new Enemy(-10,236,50);
 var enemy5 = new Enemy(-30,154,100);
-// Place all enemy objects in an array called allEnemies
+
+// Place all enemy objects in an array
 var allEnemies = [enemy1,enemy2,enemy3,enemy4,enemy5];
-// Place the player object in a variable called player
+
+// Instantiate player object
 var player = new Player(200, 400);
+
+// flag to check if game has started or not
 var gameInProgress = false;
 
+// Keep track of Player's Score
+var score = 0;
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Keep count of player's life left
+var lifeCount = 3;
+
+// This listens for key presses and sends the keys to
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
