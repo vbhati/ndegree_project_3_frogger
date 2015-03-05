@@ -48,10 +48,9 @@ var Engine = (function(global) {
 
         /* Check if game is over.
          * If yes : update menu, display message "GAME OVER"
-         * and restart game.
+         * and reset game.
          */
         if(lifeCount === 0) {
-            score = 0;
             //draw menu background to display message
             for (col = 0 ; col <= 4 ; col++) {
                 ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
@@ -60,9 +59,10 @@ var Engine = (function(global) {
             ctx.textAlign = "center";
             ctx.fillStyle = "black";
             ctx.fillText('GAME OVER',70,50);
+            imageUrl = null;
+            // call reset function to reset game after two secons of Game over.
             setTimeout(function() {
-                //reload window to restart game.
-                location.reload();
+                reset();
             }, 2000);
 
         }
@@ -262,7 +262,10 @@ var Engine = (function(global) {
      * It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        // resetting values
+        score = 0;
+        lifeCount = 3;
+        gameInProgress = false;
         playerText = 'SELECT PLAYER';
         playerImageArr = {
             "imageDetails" : [
@@ -318,6 +321,10 @@ var Engine = (function(global) {
 
         //Put "Life Left" text on menu
         ctx.fillText('LIFE LEFT',453,45);
+
+        // Put "Score" on menu
+        ctx.fillText('SCORE',245,45);
+        ctx.fillText(score,240,80);
 
         /* Put player icons on menu bar, in future more players can be added since
          * we are using JSON object to hold image url and coordinates

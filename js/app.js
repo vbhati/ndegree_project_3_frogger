@@ -97,9 +97,9 @@ Player.prototype.checkWinner = function() {
 
 // Instantiate enemy objects.
 var start = -80;
-var enemy1 = new Enemy(-25,154,170);
-var enemy2 = new Enemy(-50,236,190);
-var enemy3 = new Enemy(0,318,130);
+var enemy1 = new Enemy(-25,154,300);
+var enemy2 = new Enemy(-50,236,250);
+var enemy3 = new Enemy(0,318,180);
 var enemy4 = new Enemy(-10,236,50);
 var enemy5 = new Enemy(-30,154,100);
 
