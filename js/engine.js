@@ -209,15 +209,15 @@ var Engine = (function(global) {
         ctx.font = "bold  24pt Arial";
         ctx.textAlign = "center";
         ctx.fillStyle = "#4A4A4A";
-        ctx.fillText("FROGGER",240,40);
+        ctx.fillText("FROGGER",248,40);
 
         ctx.font = "bold  12pt Arial";
         ctx.textAlign = "center";
         ctx.fillStyle = "black";
-        ctx.fillText('SCORE',245,80);
+        ctx.fillText('SCORE',250,80);
 
         ctx.font = "bold  14pt Arial";
-        ctx.fillText(score,240,125);
+        ctx.fillText(score,250,125);
     }
 
     /* checkCanvasClickPosition(e) function gets called when user clicks anywhere within the canvas.
@@ -339,8 +339,8 @@ var Engine = (function(global) {
         ctx.fillText('CHANCES',453,80);
 
         // Display "Score" on menu
-        ctx.fillText('SCORE',245,80);
-        ctx.fillText(score,240,125);
+        ctx.fillText('SCORE',250,80);
+        ctx.fillText(score,250,125);
 
         /* Put player icons on menu bar, in future more player icons can be added since
          * we are using JSON object to hold image url and coordinates
