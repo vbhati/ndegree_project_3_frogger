@@ -31,7 +31,7 @@ Enemy.prototype.checkCollisions = function() {
     var xStart = player.x - 60;
     if(this.y == player.y && (this.x > xStart && this.x < player.x)) {
         player.x = 200;
-        player.y = 400;
+        player.y = 480;
         if(lifeCount > 0) {
             lifeCount--;
             if(score !== 0 ) {
@@ -66,10 +66,10 @@ Player.prototype.handleInput = function(code) {
     if(!gameInProgress) {
         gameInProgress = true;
     }
-    if(code === "up" && this.y !== 72) {
+    if(code === "up" && this.y !== 70) {
         this.x = this.x;
         this.y = this.y - 82;
-    } else if(code === "down" && this.y !== 400) {
+    } else if(code === "down" && this.y !== 480) {
         this.x = this.x;
         this.y = this.y + 82;
     } else if(code === "left" && this.x !== 0) {
@@ -84,30 +84,30 @@ Player.prototype.handleInput = function(code) {
 
 // Check if the player has made it to water
 Player.prototype.checkWinner = function() {
-    if(player.y == 72) {
+    if(player.y == 70) {
         // Setting time delay before moving player
         // back to start position
         setTimeout(function() {
             player.x = 200;
-            player.y = 400;
+            player.y = 480;
             score = score + 100;
-        }, 1000);
+        }, 300);
     }
 };
 
 // Instantiate enemy objects.
 var start = -80;
-var enemy1 = new Enemy(-25,154,300);
-var enemy2 = new Enemy(-50,236,250);
-var enemy3 = new Enemy(0,318,180);
-var enemy4 = new Enemy(-10,236,50);
-var enemy5 = new Enemy(-30,154,100);
+var enemy1 = new Enemy(-25,152,300);
+var enemy2 = new Enemy(-50,234,250);
+var enemy3 = new Enemy(0,316,180);
+var enemy4 = new Enemy(-10,234,50);
+var enemy5 = new Enemy(-30,152,100);
 
 // Place all enemy objects in an array
 var allEnemies = [enemy1,enemy2,enemy3,enemy4,enemy5];
 
 // Instantiate player object
-var player = new Player(200, 400);
+var player = new Player(200, 480);
 
 // flag to check if game has started or not
 var gameInProgress = false;

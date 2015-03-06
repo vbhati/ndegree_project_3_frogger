@@ -29,7 +29,7 @@ var Engine = (function(global) {
     var playerText, playerImageArr, lifeCountArr;
 
     canvas.width = 505;
-    canvas.height = 606;
+    canvas.height = 623;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -51,19 +51,21 @@ var Engine = (function(global) {
          * and reset game.
          */
         if(lifeCount === 0) {
-            //draw menu background to display message
-            for (col = 0 ; col <= 4 ; col++) {
+            // Draw menu background again to remove existing content from
+            // menu bar
+            for (col = 0; col <= 4; col++) {
                 ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
             }
-            ctx.font = "20pt Impact";
+            ctx.font = "bold 12pt Arial";
             ctx.textAlign = "center";
             ctx.fillStyle = "black";
-            ctx.fillText('GAME OVER',70,50);
+            ctx.fillText('GAME OVER',70,80);
+            // Set imageUrl to null which will remove player from start location
             imageUrl = null;
             // call reset function to reset game after two secons of Game over.
             setTimeout(function() {
                 reset();
-            }, 2000);
+            }, 1000);
 
         }
 
@@ -122,14 +124,16 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.checkCollisions();
         });
-        // Update life counts on menu bar
+        // Update life counts on menu bar. First draw the last block again
+        // Then add new values to that block.
+        ctx.font = "bold  12pt Arial";
         if(lifeCount == 2) {
             ctx.drawImage(Resources.get('images/score-board.png'), 404, 0);
-            ctx.fillText('LIFE LEFT',453,45);
-            ctx.drawImage(Resources.get('images/life-icon.png'), 470, 53);
+            ctx.fillText('CHANCES',453,80);
+            ctx.drawImage(Resources.get('images/life-icon.png'), 470, 90);
         } else if(lifeCount == 1) {
             ctx.drawImage(Resources.get('images/score-board.png'), 404, 0);
-            ctx.fillText('0 LIFE LEFT',453,45);
+            ctx.fillText('CHANCES',453,80);
         }
     }
     /* This function initially draws the "game level", it then calls
@@ -148,9 +152,10 @@ var Engine = (function(global) {
                 'images/stone-block.png',   // Row 1 of 3 of stone
                 'images/stone-block.png',   // Row 2 of 3 of stone
                 'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png'   // Row 1 of 2 of grass
+                'images/grass-block.png',   // Row 1 of 2 of grass
+                'images/grass-block.png'
             ],
-            numRows = 6,
+            numRows = 7,
             numCols = 5,
             row, col;
 
@@ -167,7 +172,7 @@ var Engine = (function(global) {
                  * get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 85);
+                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 82);
             }
         }
 
@@ -199,12 +204,20 @@ var Engine = (function(global) {
 
         /* To update score on each tick and display on canvas menu.
          */
-        ctx.drawImage(Resources.get('images/score-board.png'), 202, 0);
-        ctx.font = "14pt Impact";
+        ctx.drawImage(Resources.get('images/gap-filler.jpg'), 202, 50);
+
+        ctx.font = "bold  24pt Arial";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#4A4A4A";
+        ctx.fillText("FROGGER",240,40);
+
+        ctx.font = "bold  12pt Arial";
         ctx.textAlign = "center";
         ctx.fillStyle = "black";
-        ctx.fillText('SCORE',245,45);
-        ctx.fillText(score,240,80);
+        ctx.fillText('SCORE',245,80);
+
+        ctx.font = "bold  14pt Arial";
+        ctx.fillText(score,240,125);
     }
 
     /* checkCanvasClickPosition(e) function gets called when user clicks anywhere within the canvas.
@@ -212,7 +225,7 @@ var Engine = (function(global) {
      */
     function checkCanvasClickPosition(e) {
 
-        //Initialize values of player images and life count.
+        // Initialize values of player images and life count.
         playerText = null;
         playerImageArr = {
             "imageDetails" : []
@@ -222,11 +235,11 @@ var Engine = (function(global) {
             "counts" : [
             {
                 "xCordinate" : "440",
-                "yCordinate" : "53"
+                "yCordinate" : "90"
             },
             {
                 "xCordinate" : "470",
-                "yCordinate" : "53"
+                "yCordinate" : "90"
             }
         ]};
 
@@ -239,16 +252,16 @@ var Engine = (function(global) {
                 iconX = e.pageX;
                 iconY = e.pageY;
             }
-            //At this point, we have x and y coordinates that are
+            //iconX and iconY coordinates has values that are
             //relative to the document (that is, the entire HTML page).
             //Code below calculates coordinates relative to the canvas.
             iconX -= canvas.offsetLeft;
             iconY -= canvas.offsetTop;
 
-            if(iconX >= 24 && iconX <= 56 && iconY >= 54 && iconY <= 88) {
+            if(iconX >= 19 && iconX <= 50 && iconY >= 36 && iconY <= 128) {
                 imageUrl = 'images/char-boy.png';
-            } else if(iconX >= 70 && iconX <= 100 && iconY >= 54 && iconY <= 88) {
-                imageUrl = 'images/char-cat-girl.png';
+            } else if(iconX >= 60 && iconX <= 92 && iconY >= 36 && iconY <= 128) {
+                imageUrl = 'images/char-pink-girl.png';
             }
 
             // Render player
@@ -271,13 +284,13 @@ var Engine = (function(global) {
             "imageDetails" : [
                 {
                     "image" : "images/char-boy-icon.png",
-                    "xCordinate" : "15",
-                    "yCordinate" : "23"
+                    "xCordinate" : "10",
+                    "yCordinate" : "60"
                 },
                 {
-                    "image" : "images/char-cat-girl-icon.png",
-                    "xCordinate" : "60",
-                    "yCordinate" : "23"
+                    "image" : "images/char-pink-girl-icon.png",
+                    "xCordinate" : "50",
+                    "yCordinate" : "60"
                 }
         ]};
 
@@ -285,15 +298,15 @@ var Engine = (function(global) {
             "counts" : [
                 {
                     "xCordinate" : "410",
-                    "yCordinate" : "50"
+                    "yCordinate" : "90"
                 },
                 {
                     "xCordinate" : "440",
-                    "yCordinate" : "50"
+                    "yCordinate" : "90"
                 },
                 {
                     "xCordinate" : "470",
-                    "yCordinate" : "50"
+                    "yCordinate" : "90"
                 }
         ]};
 
@@ -305,28 +318,31 @@ var Engine = (function(global) {
      * function to draw menu once user has selected player
      */
     function drawMenu(playerText, playerImageArr,lifeCountArr) {
-        //Draw menu background i.e. first row on canvas
+        // Draw menu background i.e. first row on canvas
         for (col = 0; col <= 4; col++) {
             ctx.drawImage(Resources.get('images/score-board.png'), col * 101, 0);
         }
 
-        ctx.font = "14pt Impact";
+        ctx.font = "bold  12pt Arial";
         ctx.textAlign = "center";
         ctx.fillStyle = "black";
 
-        //Put "Select Player" text on menu if playerText variable is not null
+        // Put "Select Player" text on menu if playerText variable is not null
         if(playerText !== null) {
-            ctx.fillText('SELECT PLAYER',70,45);
+            ctx.fillText(playerText,70,80);
+        } else {
+            ctx.fillText("MOVE PLAYER",83,80);
+            ctx.fillText("USING ARROW KEYS",86,102);
         }
 
-        //Put "Life Left" text on menu
-        ctx.fillText('LIFE LEFT',453,45);
+        // Display "Life Left" text on menu
+        ctx.fillText('CHANCES',453,80);
 
-        // Put "Score" on menu
-        ctx.fillText('SCORE',245,45);
-        ctx.fillText(score,240,80);
+        // Display "Score" on menu
+        ctx.fillText('SCORE',245,80);
+        ctx.fillText(score,240,125);
 
-        /* Put player icons on menu bar, in future more players can be added since
+        /* Put player icons on menu bar, in future more player icons can be added since
          * we are using JSON object to hold image url and coordinates
          */
         if(playerImageArr.imageDetails.length > 0) {
@@ -353,11 +369,12 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/char-cat-girl.png',
+        'images/char-pink-girl.png',
         'images/score-board.png',
-        'images/char-cat-girl-icon.png',
+        'images/char-pink-girl-icon.png',
         'images/char-boy-icon.png',
-        'images/life-icon.png'
+        'images/life-icon.png',
+        'images/gap-filler.jpg'
     ]);
     Resources.onReady(init);
 
