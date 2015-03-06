@@ -1,0 +1,8 @@
+Websites referred as resources:
+https://github.com/udacity/frontend-nanodegree-arcade-game
+http://diveintohtml5.info/canvas.html#text
+http://jsonlint.com/
+http://stackoverflow.com/
+http://jquery.com/
+http://www.picmonkey.com/ for image editing
+http://udacity.github.io/frontend-nanodegree-styleguide/javascript.html
