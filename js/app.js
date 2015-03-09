@@ -96,15 +96,15 @@ Player.prototype.checkWinner = function() {
 };
 
 // Instantiate enemy objects.
-var start = -80;
-var enemy1 = new Enemy(-25,152,300);
-var enemy2 = new Enemy(-50,234,250);
-var enemy3 = new Enemy(0,316,180);
-var enemy4 = new Enemy(-10,234,50);
-var enemy5 = new Enemy(-30,152,100);
-
 // Place all enemy objects in an array
-var allEnemies = [enemy1,enemy2,enemy3,enemy4,enemy5];
+var allEnemies = [];
+
+var start = -80;
+allEnemies[1] = new Enemy(-25,152,300);
+allEnemies[2] = new Enemy(-50,234,250);
+allEnemies[3] = new Enemy(0,316,180);
+allEnemies[4] = new Enemy(-10,234,50);
+allEnemies[5] = new Enemy(-30,152,100);
 
 // Instantiate player object
 var player = new Player(200, 480);

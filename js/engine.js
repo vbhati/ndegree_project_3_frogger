@@ -248,26 +248,27 @@ var Engine = (function(global) {
          */
         if(!gameInProgress) {
             var iconX,iconY;
-            if (e.pageX != undefined && e.pageY != undefined) {
+            if (e.pageX !== undefined && e.pageY !== undefined) {
                 iconX = e.pageX;
                 iconY = e.pageY;
-            }
-            //iconX and iconY coordinates has values that are
-            //relative to the document (that is, the entire HTML page).
-            //Code below calculates coordinates relative to the canvas.
-            iconX -= canvas.offsetLeft;
-            iconY -= canvas.offsetTop;
 
-            if(iconX >= 19 && iconX <= 50 && iconY >= 36 && iconY <= 128) {
-                imageUrl = 'images/char-boy.png';
-            } else if(iconX >= 60 && iconX <= 92 && iconY >= 36 && iconY <= 128) {
-                imageUrl = 'images/char-pink-girl.png';
-            }
+                 //iconX and iconY coordinates has values that are
+                //relative to the document (that is, the entire HTML page).
+                //Code below calculates coordinates relative to the canvas.
+                iconX -= canvas.offsetLeft;
+                iconY -= canvas.offsetTop;
 
-            // Render player
-            player.render(imageUrl);
-            // draw the menu by removing player icons and updating remaining life icons.
-            drawMenu(playerText, playerImageArr,lifeCountArr);
+                if(iconX >= 19 && iconX <= 50 && iconY >= 36 && iconY <= 128) {
+                    imageUrl = 'images/char-boy.png';
+                } else if(iconX >= 60 && iconX <= 92 && iconY >= 36 && iconY <= 128) {
+                    imageUrl = 'images/char-pink-girl.png';
+                }
+
+                // Render player
+                player.render(imageUrl);
+                // draw the menu by removing player icons and updating remaining life icons.
+                drawMenu(playerText, playerImageArr,lifeCountArr);
+            }
         }
     }
 
@@ -346,15 +347,15 @@ var Engine = (function(global) {
          * we are using JSON object to hold image url and coordinates
          */
         if(playerImageArr.imageDetails.length > 0) {
-            for(var icon in playerImageArr.imageDetails) {
-                ctx.drawImage(Resources.get(playerImageArr.imageDetails[icon].image), playerImageArr.imageDetails[icon].xCordinate , playerImageArr.imageDetails[icon].yCordinate);
+            for(var i = 0 ; i < playerImageArr.imageDetails.length ; i++) {
+                ctx.drawImage(Resources.get(playerImageArr.imageDetails[i].image), playerImageArr.imageDetails[i].xCordinate , playerImageArr.imageDetails[i].yCordinate);
             }
         }
 
         // Put life icons on menu, more life icons can be added if require through JSON
         if(lifeCountArr.counts.length > 0) {
-            for(var count in lifeCountArr.counts) {
-                ctx.drawImage(Resources.get('images/life-icon.png'), lifeCountArr.counts[count].xCordinate , lifeCountArr.counts[count].yCordinate);
+            for(var i = 0 ; i < lifeCountArr.counts.length ; i++) {
+                ctx.drawImage(Resources.get('images/life-icon.png'), lifeCountArr.counts[i].xCordinate , lifeCountArr.counts[i].yCordinate);
             }
         }
     }

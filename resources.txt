@@ -6,3 +6,4 @@ http://stackoverflow.com/
 http://jquery.com/
 http://www.picmonkey.com/ for image editing
 http://udacity.github.io/frontend-nanodegree-styleguide/javascript.html
+http://stackoverflow.com/questions/27509/detecting-an-undefined-object-property
